@@ -1,5 +1,6 @@
 my_model/
 linknet_multitask_model_weights.h5
+linknet.py
 
 __pycache__/
 .vscode/
