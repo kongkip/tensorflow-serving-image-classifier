@@ -9,7 +9,7 @@ import tensorflow as tf
 
 
 model  = tf.keras.Sequential([ 
-    tf.keras.layers.Conv2D(32, (3, 3), input_shape=(256, 256), activation="relu"),
+    tf.keras.layers.Conv2D(32, (3, 3), input_shape=(256, 256, 3), activation="relu"),
     tf.keras.layers.MaxPooling2D((2,2)),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(3, activation="softmax")
@@ -39,7 +39,7 @@ docker run -d --name serving_base tensorflow/serving
 
 Copy the saved model into serving_base container's model folder
 ```bash
-docker cp my_model/saved_model linknet_serving:/models/linknet
+docker cp my_model/saved_model serving_base:/models/classifier
 ```
 
 ```bash
@@ -54,7 +54,7 @@ docker kill serving_base
 Run the image to serve our SavedModel as a daemon and we map the ports 8501
 
 ```bash
-docker run -d -p 8501:8501 -p 8500:8500 --name linknet linknet
+docker run -d -p 8501:8501 -p 8500:8500 --name classifier classifier
 ```
 
 
@@ -80,7 +80,7 @@ data =json.dumps({
         "instances": image_np.numpy().tolist()
     })
 
-r = requests.post("http://localhost:8501/v1/models/linknet:predict", data=data)
+r = requests.post("http://localhost:8501/v1/models/classifier:predict", data=data)
 
 # Getting probabilities 
 result = json.loads(r.text)["predictions"][0]
