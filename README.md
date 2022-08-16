@@ -26,24 +26,29 @@ tf.saved_model.save(model, "my_model/saved_model/1/")
 
 ## How to serve
 
+Pull the tensorflow serving docker image
+
 ```bash
 docker pull tensorflow/serving
 ```
 
+Run a  serving_base image
 ```bash
-docker run -d --name linknet_serving tensorflow/serving
+docker run -d --name serving_base tensorflow/serving
 ```
 
+Copy the saved model into serving_base container's model folder
 ```bash
 docker cp my_model/saved_model linknet_serving:/models/linknet
 ```
 
 ```bash
-docker commit --change "ENV MODEL_NAME linknet" linknet_serving linknet
+docker commit --change "ENV MODEL_NAME classifier" serving_base classifier
 ```
 
+Kill the serving_base since we don't need it
 ```bash
-docker kill linknet_serving
+docker kill serving_base
 ```
 
 Run the image to serve our SavedModel as a daemon and we map the ports 8501
